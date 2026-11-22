@@ -1,11 +1,10 @@
-# Partner Quarterly Business Report (Power BI)
-
-A direct primary care company charges partner businesses a monthly membership fee for each covered member. Every quarter it reports back to each partner, and each partner wants to know two things:
+# Partner Quarterly Business Report with RLS
+A direct primary care organization charges partner businesses a monthly membership fee for each covered member. Every quarter it reports back to each partner, and each wants to know two things:
 
 1. **Are our people using it?**
 2. **Is this saving us money?**
 
-The company does not want to build and maintain a separate report for every partner.
+The organization does not want to build and maintain a separate report for every partner.
 
 ## The report
 
@@ -16,11 +15,13 @@ The company does not want to build and maintain a separate report for every part
 
 Both pages are filtered by year, quarter and partner, and each page has an introduction line that updates with the selection.
 
-![Savings & ROI page](docs/screenshots/savings_roi.png)
+<img width="876" height="435" alt="utilization" src="https://github.com/user-attachments/assets/909462b0-9f07-43a1-be51-3f7a8e63d264" />
+<img width="874" height="438" alt="savings_roi" src="https://github.com/user-attachments/assets/7128525a-350c-473c-8bed-faeab4f0d92f" />
+
 
 ## Row-level security
 
-Shared as it is, any partner could use the Partner filter to see other partners' data. Dynamic row-level security solves this with one report:
+Any partner could use the Partner filter to see other partners' data. Dynamic row-level security solves this with one report:
 
 - A **UserAccess** table links each sign-in to a partner (EmployerID).
 - One **Employer** role filters the data by whoever is signed in.
@@ -61,8 +62,7 @@ Star schema built from CSV files:
 | Return on investment | Estimated savings ÷ membership investment |
 | Engagement rate | Members with at least one visit in the quarter ÷ covered members at quarter end |
 
-Every other KPI, with its calculation, source and assumptions, is in the [data dictionary](docs/data_dictionary.md).
-
+Every other KPI, with its calculation, source and assumptions, is in the [data dictionary].
 ## Repository contents
 
 ```
