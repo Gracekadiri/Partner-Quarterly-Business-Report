@@ -7,18 +7,18 @@ A direct primary care organization charges partner businesses a monthly membersh
 The organization does not want to build and maintain a separate report for every partner.
  
 ## The report
- 
+
+**[Watch the 1-minute demo](LINK-TO-LINKEDIN-POST)**: an admin login sees all five partners; two test partner logins each see only their own.
+
 | Page | Answers | Main visuals |
 |---|---|---|
 | **Utilization** | Are our people using it? | Eligible staff, staff enrolled, engagement rate against a 70% target, which members used care, visits by quarter, visit reasons, how care was received |
 | **Savings & ROI** | Is this saving us money? | Membership investment, estimated savings, return on investment, cost per member against an insurance benchmark, where the savings came from, top prescriptions by savings |
  
-Both pages are filtered by year, quarter and partner, and each page has an introduction line that updates with the selection.
- 
+  
 <img width="876" height="435" alt="utilization" src="https://github.com/user-attachments/assets/909462b0-9f07-43a1-be51-3f7a8e63d264" />
 <img width="874" height="438" alt="savings_roi" src="https://github.com/user-attachments/assets/7128525a-350c-473c-8bed-faeab4f0d92f" />
 
-**[Watch the 1-minute demo](LINK-TO-LINKEDIN-POST)**: an admin login sees all five partners; two test partner logins each see only their own.
 
 ## Key insights (Q3 2026)
  
@@ -27,6 +27,15 @@ Both pages are filtered by year, quarter and partner, and each page has an intro
 - **Engagement is above target, but families lag.** 72.9% of covered members used care against a 70% target. Staff used it most; children were least likely to use care.
 - **Results differ by partner.** Summit Logistics returned 1.94x, while Front Range Beverage returned 1.63x, the lowest of the five, partly because its telehealth visits dropped sharply.
 - **Visits fell slightly from Q2,** mainly from fewer acute illness visits, which is consistent with a seasonal pattern rather than a drop in engagement.
+
+## Recommendations
+
+- **Review Front Range Beverage's telehealth drop before its next review.** Its telehealth visits fell from 104 to 28 while other partners held steady. Check for an access or awareness issue (for example, a change in its staff communications) and set a target to bring its return back toward the 1.8x average.
+- **Encourage family use of care.** Children are the least engaged group. Promoting child check-ups and preventive visits through partners' benefits communications could lift engagement and add avoided outside care costs.
+- **Push members to the clinic before urgent care or the ER.** Avoided outside care drives most of the savings, so reminding members about same-day visits and 24/7 call and text access is the most direct route toward the 2.0x target.
+- **Watch the visit dip next quarter instead of reacting now.** The Q3 decline came mainly from fewer acute illness visits, which looks seasonal. If visits stay down in Q4, investigate.
+
+  
 ## Row-level security
  
 Shared as it is, any partner could use the Partner filter to see other partners' data. Dynamic row-level security solves this with one report:
