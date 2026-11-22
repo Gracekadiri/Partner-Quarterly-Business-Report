@@ -38,7 +38,7 @@ RETURN
     [EmployerID] IN UserEmployers
 ```
 
-The same rule is applied to **DimMember**. **DimLocation** keeps the public clinics and only the partner's own onsite clinic. All three rules are in [dax/rls_rules.dax](dax/rls_rules.dax).
+The same rule is applied to **DimMember**. **DimLocation** keeps the public clinics and only the partner's own onsite clinic. All three rules are in Data dictionary
 
 **Testing:** the report was published to Power BI Service and shared through a Power BI app. Two test partner accounts were assigned to the Employer role and signed in separately. Each saw only its own partner's data, while the admin account saw all five.
 
@@ -70,7 +70,13 @@ data/     Synthetic CSV files and generate_data.py
 dax/      Core measures and RLS rules
 docs/     Data dictionary, report preview (PDF), Pbix and screenshots
 ```
+## Key insights (Q3 2026, synthetic data)
 
+- **Partners saved more than they spent.** Across all five partners, $368K in memberships produced an estimated $678K in savings, a 1.84x return. That is below the 2.0x target, so the value story holds but has room to grow.
+- **Most of the value came from avoided outside care.** About two thirds of savings came from clinic visits that replaced specialist, ER, urgent care and other outside visits.
+- **Engagement is above target, but families lag.** 72.9% of covered members used care against a 70% target. Staff used it most; children were least likely to use care.
+- **Results differ by partner.** Summit Logistics returned 1.94x, while Front Range Beverage returned 1.63x, the lowest of the five, partly because its telehealth visits dropped sharply.
+- **Visits fell slightly from Q2,** mainly from fewer acute illness visits, which is consistent with a seasonal pattern rather than a drop in engagement.
   
 ## Tools
 
