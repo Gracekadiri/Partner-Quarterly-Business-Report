@@ -1,0 +1,10 @@
+LabTestID,LabTestName,RetailPrice
+T01,Complete Blood Count (CBC),45
+T02,Comprehensive Metabolic Panel,60
+T03,Lipid Panel,55
+T04,Hemoglobin A1c,50
+T05,Thyroid Panel (TSH),65
+T06,Vitamin D,90
+T07,"Testosterone, Total",110
+T08,Strep / Flu Rapid Test,40
+T09,Urinalysis,30

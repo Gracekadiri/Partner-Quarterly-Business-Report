@@ -1,0 +1,9 @@
+LocationID,LocationName,LocationType,State,HostEmployerID
+L00,Virtual Care,Virtual,,
+L01,Colorado Springs Clinic,Public Clinic,CO,
+L02,Arizona Clinic,Public Clinic,AZ,
+L03,Texas Clinic,Public Clinic,TX,
+L04,Summit Logistics Onsite,Embedded Clinic,CO,E001
+L05,Front Range Beverage Onsite,Embedded Clinic,CO,E002
+L06,Desert Sun Onsite,Embedded Clinic,AZ,E003
+L07,Lone Star Brew Onsite,Embedded Clinic,TX,E004

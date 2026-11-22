@@ -1,0 +1,292 @@
+DEFINE
+    MEASURE '_Measures'[Employer Spend] = SUM ( FactMemberMonths[MembershipFee] )
+    MEASURE '_Measures'[Member Months] = COUNTROWS ( FactMemberMonths )
+    MEASURE '_Measures'[Avoided Care Cost] = SUMX (
+    FactVisits,
+    RELATED ( BenchmarkAvoidedCare[BenchmarkCost] )
+)
+    MEASURE '_Measures'[Rx Retail Value] = SUM ( FactPrescriptions[RetailPrice] )
+    MEASURE '_Measures'[Rx Price Paid] = SUM ( FactPrescriptions[PricePaid] )
+    MEASURE '_Measures'[Rx Savings] = [Rx Retail Value] - [Rx Price Paid]
+    MEASURE '_Measures'[Rx Savings Rate] = DIVIDE ( [Rx Savings], [Rx Retail Value] )
+    MEASURE '_Measures'[Lab Savings] = SUMX (
+    FactLabs,
+    RELATED ( DimLabTest[RetailPrice] )
+)
+    MEASURE '_Measures'[Total Savings] = [Avoided Care Cost] + [Rx Savings] + [Lab Savings]
+    MEASURE '_Measures'[ROI Multiple] = DIVIDE ( [Total Savings], [Employer Spend] )
+    MEASURE '_Measures'[Cost per Member] = DIVIDE ( [Employer Spend], [Member Months] )
+    MEASURE '_Measures'[ROI Target] = CALCULATE ( MAX ( Targets[TargetValue] ), Targets[Metric] = "ROI Multiple" )
+    MEASURE '_Measures'[Engagement Target] = CALCULATE ( MAX ( Targets[TargetValue] ), Targets[Metric] = "Engagement Rate" )
+    MEASURE '_Measures'[Insurance Benchmark PMPM] = CALCULATE (
+    MAX ( Targets[TargetValue] ),
+    Targets[Metric] = "Traditional Insurance Cost PMPM"
+)
+    MEASURE '_Measures'[Last Month In Period] = MAX ( FactMemberMonths[MonthStart] )
+    MEASURE '_Measures'[Eligible Employees] = VAR LastMonth = [Last Month In Period]
+        RETURN
+            CALCULATE ( SUM ( FactEligibility[EligibleEmployees] ), DimDate[Date] = LastMonth )
+    MEASURE '_Measures'[Enrolled Employees] = VAR LastMonth = [Last Month In Period]
+        RETURN
+            CALCULATE (
+                COUNTROWS ( FactMemberMonths ),
+                FactMemberMonths[Relationship] = "Employee",
+                DimDate[Date] = LastMonth
+            )
+    MEASURE '_Measures'[Enrollment Rate] = DIVIDE ( [Enrolled Employees], [Eligible Employees] )
+    MEASURE '_Measures'[Enrolled Members] = VAR LastMonth = MAX ( FactMemberMonths[MonthStart] )
+RETURN
+    CALCULATE ( COUNTROWS ( FactMemberMonths ), DimDate[Date] = LastMonth )
+    MEASURE '_Measures'[Active Patients] = DISTINCTCOUNT ( 
+    FactVisits[MemberID] )
+    MEASURE '_Measures'[Engagement Rate] = DIVIDE ( [Active Patients], [Enrolled Members] )
+    MEASURE '_Measures'[Total Visits] = COUNTROWS ( FactVisits )
+    MEASURE '_Measures'[Visits per Member per Month] = DIVIDE ( [Total Visits], [Member Months] )
+    MEASURE '_Measures'[Visit Mix %] = DIVIDE (
+    [Total Visits],
+    CALCULATE ( [Total Visits], REMOVEFILTERS ( FactVisits[VisitType] ) )
+)
+    MEASURE '_Measures'[Telehealth Share] = DIVIDE (
+    CALCULATE ( [Total Visits], FactVisits[VisitType] = "Telehealth" ),
+    [Total Visits]
+)
+    MEASURE '_Measures'[Same-Day Access Rate] = DIVIDE (
+    CALCULATE ( [Total Visits], FactVisits[AccessTiming] = "Same Day" ),
+    [Total Visits]
+)
+    MEASURE '_Measures'[Total Savings PQ] = IF(HASONEVALUE(DimDate[YearQuarter]),
+CALCULATE ( [Total Savings], DATEADD ( DimDate[Date], -1, QUARTER ) ))
+    MEASURE '_Measures'[Employer Spend PQ] = IF (
+    HASONEVALUE ( DimDate[YearQuarter] ),
+    CALCULATE ( 
+        [Employer Spend], 
+        DATEADD ( DimDate[Date], -1, QUARTER )
+         )
+)
+    MEASURE '_Measures'[Enrolled Members PQ] = CALCULATE ( 
+    [Enrolled Members], 
+    DATEADD ( DimDate[Date], -1, QUARTER ) 
+    )
+    MEASURE '_Measures'[Active Patients PQ] = CALCULATE(
+            [Active Patients],
+            DATEADD(DimDate[Date], -1, QUARTER)
+        )
+    MEASURE '_Measures'[Total Savings vs PQ %] = DIVIDE ( [Total Savings] - [Total Savings PQ], [Total Savings PQ], 0 )
+    MEASURE '_Measures'[Employer Spend vs PQ %] = COALESCE (
+    DIVIDE ( [Employer Spend] - [Employer Spend PQ], [Employer Spend PQ] ),
+    0
+)
+    MEASURE '_Measures'[Engagement Target Label] = "vs " & FORMAT ( [Engagement Target], "*100%" ) & "  target"
+    MEASURE '_Measures'[Period Label] = VAR CurQ = SELECTEDVALUE ( DimDate[YearQuarter] )
+RETURN
+ RIGHT ( CurQ, 2 ) & " " & LEFT ( CurQ, 4 )
+    MEASURE '_Measures'[Page 1 Title] = VAR CurQ = SELECTEDVALUE ( DimDate[YearQuarter] )
+VAR PartnerName = SELECTEDVALUE ( DimEmployer[EmployerName], "Partners" )
+RETURN
+    PartnerName & " Savings & ROI"
+        & IF ( HASONEVALUE ( DimDate[YearQuarter] ), " in " & RIGHT ( CurQ, 2 ) & " " & LEFT ( CurQ, 4 ) )
+    MEASURE '_Measures'[Page 2 Title] = VAR CurQ = SELECTEDVALUE ( DimDate[YearQuarter] )
+VAR PartnerName = SELECTEDVALUE ( DimEmployer[EmployerName], "Partners" )
+RETURN
+    PartnerName & " Utilization & Engagement"
+        & IF ( HASONEVALUE ( DimDate[YearQuarter] ), " in " & RIGHT ( CurQ, 2 ) & " " & LEFT ( CurQ, 4 ) )
+    MEASURE '_Measures'[Enrolled Members vs PQ %] = DIVIDE ( [Enrolled Members] - [Enrolled Members PQ], [Enrolled Members PQ] )
+    MEASURE '_Measures'[Engagement vs Target] = [Engagement Rate] - [Engagement Target]
+    MEASURE '_Measures'[Cost per Member vs Benchmark %] = DIVIDE (
+    [Cost per Member] - [Insurance Benchmark PMPM],
+    [Insurance Benchmark PMPM]
+)
+    MEASURE '_Measures'[ROI vs Target] = [ROI Multiple] - [ROI Target]
+    MEASURE '_Measures'[ROI Target Label] = "vs " & FORMAT ( [ROI Target], "0.0" ) & "x target"
+    MEASURE '_Measures'[Total Savings Label] = VAR v = [Total Savings PQ]
+VAR Amount =
+    SWITCH (
+        TRUE (),
+        v >= 1000000, FORMAT ( v / 1000000, "$#,##0.0" ) & "M",
+        v >= 1000, FORMAT ( v / 1000, "$#,##0" ) & "K",
+        FORMAT ( v, "$#,##0" )
+    )
+RETURN
+    IF ( ISBLANK ( v ), "no prior quarter", "vs " & Amount & " last quarter" )
+    MEASURE '_Measures'[Employer Spend Label] = VAR v = [Employer Spend PQ]
+VAR Amount =
+    SWITCH (
+        TRUE (),
+        v >= 1000000, FORMAT ( v / 1000000, "$#,##0.0" ) & "M",
+        v >= 1000, FORMAT ( v / 1000, "$#,##0" ) & "K",
+        FORMAT ( v, "$#,##0" )
+    )
+RETURN
+    IF ( ISBLANK ( v ), "no prior quarter", "vs " & Amount & " last quarter" )
+    MEASURE '_Measures'[Benchmark Label] = "vs " & FORMAT ( [Insurance Benchmark PMPM], "$#,##0" ) & " insurance"
+    MEASURE '_Measures'[Trend Title] = VAR QuartersAbove =
+    COUNTROWS (
+        FILTER ( ALL ( DimDate[YearQuarter] ), [Total Savings] > [Employer Spend] )
+    )
+VAR QuartersTotal =
+    COUNTROWS (
+        FILTER ( ALL ( DimDate[YearQuarter] ), NOT ISBLANK ( [Employer Spend] ) )
+    )
+RETURN
+    IF (
+        QuartersAbove = QuartersTotal,
+        "Savings have exceeded investment in all " & QuartersTotal & " quarters",
+        "Savings exceeded investment in " & QuartersAbove & " of " & QuartersTotal & " quarters"
+    )
+    MEASURE '_Measures'[Source Title] = VAR Savings = [Total Savings]
+VAR SavingsText =
+    SWITCH (
+        TRUE (),
+        Savings >= 1000000, FORMAT ( Savings / 1000000, "$#,##0.0" ) & "M",
+        FORMAT ( Savings / 1000, "$#,##0" ) & "K"
+    )
+RETURN
+    "Where the " & SavingsText & " in savings came from"
+    MEASURE '_Measures'[Avoided Care Title] = "" & FORMAT ( DIVIDE ( [Avoided Care Cost], [Total Savings] ), "0%" )
+    & " of these savings came from avoided outside costs"
+    MEASURE '_Measures'[Rx Title] = VAR TopN_Count = 5
+VAR AllMeds = ALL ( DimMedication[MedicationName] )
+VAR MedsWithSavings =
+    COUNTROWS ( FILTER ( AllMeds, [Rx Savings] > 0 ) )
+VAR TopMeds =
+    TOPN ( TopN_Count, AllMeds, [Rx Savings], DESC )
+VAR TopSavings = SUMX ( TopMeds, [Rx Savings] )
+VAR AllRxSavings = CALCULATE ( [Rx Savings], REMOVEFILTERS ( DimMedication ) )
+VAR Share = DIVIDE ( TopSavings, AllRxSavings )
+VAR AllText =
+    IF (
+        AllRxSavings >= 1000000,
+        FORMAT ( AllRxSavings / 1000000, "$#,##0.0" ) & "M",
+        FORMAT ( AllRxSavings / 1000, "$#,##0" ) & "K"
+    )
+RETURN
+    SWITCH (
+        TRUE (),
+        MedsWithSavings = 0, "No prescription savings this quarter",
+        MedsWithSavings <= TopN_Count,
+            "The " & AllText & " saved on prescriptions came from "
+                & MedsWithSavings & IF ( MedsWithSavings = 1, " medication", " medications" ),
+        FORMAT ( Share, "0%" ) & " of the " & AllText
+            & " saved on prescriptions came from " & TopN_Count & " medications"
+    )
+    MEASURE '_Measures'[Eligible Staff] = "▲ +1.6% vs 1,590 last quarter"
+    MEASURE '_Measures'[Acive Patients vs PQ %] = COALESCE (
+    DIVIDE ( [Active Patients] - [Active Patients PQ], [Active Patients PQ] ),
+    0
+)
+    MEASURE '_Measures'[QoQ] = "QoQ"
+    MEASURE '_Measures'[Enrolled Detail] = "covering "
+    & FORMAT ( [Enrolled Members], "#,##0" ) & " members"
+    MEASURE '_Measures'[Hero Line] = VAR CurQ = SELECTEDVALUE ( DimDate[YearQuarter] )
+VAR CurText = RIGHT ( CurQ, 2 ) & " " & LEFT ( CurQ, 4 )
+VAR Gap = ( [Engagement Rate] - [Engagement Target] ) * 100
+RETURN
+    IF (
+        NOT HASONEVALUE ( DimDate[YearQuarter] ),
+        "Select a quarter to view the quarterly review.",
+        "of covered members (" & FORMAT ( [Active Patients], "#,##0" ) & " of "
+            & FORMAT ( [Enrolled Members], "#,##0" ) & ") used care in " & CurText & ", "
+            & FORMAT ( ABS ( Gap ), "0.0" ) & " points "
+            & IF ( Gap >= 0, "above", "below" ) & " our "
+            & FORMAT ( [Engagement Target], "0%" ) & " target."
+    )
+    MEASURE '_Measures'[Didn't use care] = [Enrolled Members] - [Active Patients]
+    MEASURE '_Measures'[Reasons for Visit] = "Reasons for the " & [Total Visits] & " visits"
+    MEASURE '_Measures'[Selected Quarter Color] = IF (
+    MAX ( DimDate[YearQuarter] )
+        = CALCULATE ( SELECTEDVALUE ( DimDate[YearQuarter] ), ALLSELECTED ( DimDate ) ),
+    "#0F5E66",
+    "#A8DDD8"
+)
+    MEASURE '_Measures'[Visits PQ Text] = VAR Chg = [Visit vs PQ %]
+RETURN
+    IF (
+        ISBLANK ( [Visits PQ] ),
+        "no prior quarter",
+        IF ( Chg >= 0, "▲ +", "▼ −" ) & FORMAT ( ABS ( Chg ), "0.0%" )
+            & " vs " & FORMAT ( [Visits PQ], "#,##0" ) & " last quarter"
+    )
+    MEASURE '_Measures'[Visits PQ] = CALCULATE(
+            [Total Visits],
+            DATEADD(DimDate[Date], -1, QUARTER)
+        )
+    MEASURE '_Measures'[Visit vs PQ %] = COALESCE (
+    DIVIDE ( [Total Visits] - [Visits PQ], [Visits PQ] ),
+    0
+)
+    MEASURE '_Measures'[Savings Share] = DIVIDE ( [Savings by Source], [Total Savings] )
+    MEASURE '_Measures'[Page 3 Intro] = VAR CurQ = SELECTEDVALUE ( DimDate[YearQuarter] )
+VAR PartnerName = SELECTEDVALUE ( DimEmployer[EmployerName], "all partners" )
+RETURN
+    IF (
+        NOT HASONEVALUE ( DimDate[YearQuarter] ),
+        "Select a quarter to view the quarterly review.",
+        "What changed for " & PartnerName & " in "
+            & RIGHT ( CurQ, 2 ) & " " & LEFT ( CurQ, 4 )
+            & ", why, and what to watch next."
+    )
+
+EVALUATE
+    SUMMARIZECOLUMNS(
+        "Employer Spend", [Employer Spend],
+        "Member Months", [Member Months],
+        "Avoided Care Cost", [Avoided Care Cost],
+        "Rx Retail Value", [Rx Retail Value],
+        "Rx Price Paid", [Rx Price Paid],
+        "Rx Savings", [Rx Savings],
+        "Rx Savings Rate", [Rx Savings Rate],
+        "Lab Savings", [Lab Savings],
+        "Total Savings", [Total Savings],
+        "ROI Multiple", [ROI Multiple],
+        "Cost per Member", [Cost per Member],
+        "ROI Target", [ROI Target],
+        "Engagement Target", [Engagement Target],
+        "Insurance Benchmark PMPM", [Insurance Benchmark PMPM],
+        "Last Month In Period", [Last Month In Period],
+        "Eligible Employees", [Eligible Employees],
+        "Enrolled Employees", [Enrolled Employees],
+        "Enrollment Rate", [Enrollment Rate],
+        "Enrolled Members", [Enrolled Members],
+        "Active Patients", [Active Patients],
+        "Engagement Rate", [Engagement Rate],
+        "Total Visits", [Total Visits],
+        "Visits per Member per Month", [Visits per Member per Month],
+        "Visit Mix %", [Visit Mix %],
+        "Telehealth Share", [Telehealth Share],
+        "Same-Day Access Rate", [Same-Day Access Rate],
+        "Total Savings PQ", [Total Savings PQ],
+        "Employer Spend PQ", [Employer Spend PQ],
+        "Enrolled Members PQ", [Enrolled Members PQ],
+        "Active Patients PQ", [Active Patients PQ],
+        "Total Savings vs PQ %", [Total Savings vs PQ %],
+        "Employer Spend vs PQ %", [Employer Spend vs PQ %],
+        "Engagement Target Label", [Engagement Target Label],
+        "Period Label", [Period Label],
+        "Page 1 Title", [Page 1 Title],
+        "Page 2 Title", [Page 2 Title],
+        "Enrolled Members vs PQ %", [Enrolled Members vs PQ %],
+        "Engagement vs Target", [Engagement vs Target],
+        "Cost per Member vs Benchmark %", [Cost per Member vs Benchmark %],
+        "ROI vs Target", [ROI vs Target],
+        "ROI Target Label", [ROI Target Label],
+        "Total Savings Label", [Total Savings Label],
+        "Employer Spend Label", [Employer Spend Label],
+        "Benchmark Label", [Benchmark Label],
+        "Trend Title", [Trend Title],
+        "Source Title", [Source Title],
+        "Avoided Care Title", [Avoided Care Title],
+        "Rx Title", [Rx Title],
+        "Eligible Staff", [Eligible Staff],
+        "Acive Patients vs PQ %", [Acive Patients vs PQ %],
+        "QoQ", [QoQ],
+        "Enrolled Detail", [Enrolled Detail],
+        "Hero Line", [Hero Line],
+        "Didn't use care", [Didn't use care],
+        "Reasons for Visit", [Reasons for Visit],
+        "Selected Quarter Color", [Selected Quarter Color],
+        "Visits PQ Text", [Visits PQ Text],
+        "Visits PQ", [Visits PQ],
+        "Visit vs PQ %", [Visit vs PQ %],
+        "Savings Share", [Savings Share],
+        "Page 3 Intro", [Page 3 Intro]
+    )

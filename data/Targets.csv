@@ -1,0 +1,5 @@
+Metric,TargetValue,Unit,Note
+ROI Multiple,2.0,x,Leadership target
+Engagement Rate,0.7,%,Active patients in quarter / avg enrolled members
+Traditional Insurance Cost PMPM,600.0,$,Assumed employer cost per member per month under traditional insurance
+Membership Fee PMPM,80.0,$,Flat monthly membership

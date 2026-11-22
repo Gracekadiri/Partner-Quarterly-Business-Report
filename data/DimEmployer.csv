@@ -1,0 +1,6 @@
+EmployerID,EmployerName,Industry,State,ContractStartDate,MonthlyFeePerMember
+E001,Summit Logistics,Warehousing,CO,2025-01-01,80
+E002,Front Range Beverage Co.,Beverage Distribution,CO,2025-01-01,80
+E003,Desert Sun Distribution,Warehousing,AZ,2025-04-01,80
+E004,Lone Star Brew Distributors,Beverage Distribution,TX,2025-07-01,80
+E005,Peak Freight Partners,Freight & Logistics,TX,2026-01-01,80

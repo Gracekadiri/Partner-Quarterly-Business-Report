@@ -1,0 +1,26 @@
+MedicationID,MedicationName,DrugClass,IsGeneric,IncludedInMembership,RetailPricePerFill,WholesalePricePerFill
+M01,Amoxicillin 500mg,Antibiotic,True,True,18,3
+M02,Azithromycin 250mg,Antibiotic,True,True,25,4
+M03,Prednisone 10mg,Corticosteroid,True,True,15,2
+M04,Ibuprofen 800mg,NSAID,True,True,14,2
+M05,Cyclobenzaprine 10mg,Muscle Relaxant,True,True,22,3
+M06,Benzonatate 100mg,Antitussive,True,True,28,4
+M07,Lisinopril 20mg,Antihypertensive,True,True,16,2
+M08,Amlodipine 10mg,Antihypertensive,True,True,20,2
+M09,Metformin 1000mg,Antidiabetic,True,True,19,3
+M10,Atorvastatin 40mg,Statin,True,True,30,3
+M11,Levothyroxine 50mcg,Thyroid,True,True,24,4
+M12,Sertraline 50mg,SSRI,True,True,27,3
+M13,Bupropion XL 150mg,Antidepressant,True,True,45,6
+M14,Omeprazole 20mg,PPI,True,True,26,3
+M15,Triamcinolone Cream 0.1%,Topical Steroid,True,True,32,5
+M16,Montelukast 10mg,Asthma,True,True,35,4
+M17,Albuterol HFA Inhaler,Asthma,True,False,70,24
+M18,Fluticasone Nasal Spray,Allergy,True,False,38,9
+M19,Testosterone Cypionate 200mg/mL,Hormone,True,False,95,32
+M20,Estradiol 1mg,Hormone,True,False,48,12
+M21,Semaglutide (compounded) 4-week,GLP-1 Weight Mgmt,False,False,1050,290
+M22,Tirzepatide (compounded) 4-week,GLP-1 Weight Mgmt,False,False,1120,330
+M23,Apixaban 5mg,Anticoagulant,False,False,560,210
+M24,Insulin Glargine Pen,Insulin,False,False,420,140
+M25,Rizatriptan 10mg,Migraine,True,False,85,22

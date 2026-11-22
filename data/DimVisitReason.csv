@@ -1,0 +1,10 @@
+ReasonID,VisitReason
+R01,"Acute Illness (cold, flu, infection)"
+R02,Injury / Musculoskeletal
+R03,Chronic Disease Management
+R04,Preventive / Screening
+R05,Mental & Behavioral Health
+R06,Skin Condition
+R07,Weight Management
+R08,Hormone Therapy
+R09,Medication Refill / Follow-up
